@@ -1,0 +1,81 @@
+@startuml Diagram
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "user" as user {
+  + user_id : UUIDv4 <<generated>>
+  --
+  - profile_id : string NOT NULL
+  username : string NOT NULL
+  password : string NOT NULL
+}
+
+entity "token" as token {
+  + token_id : UUIDv4 <<generated>>
+  --
+  token : string NOT NULL
+  expire_at : dateTime NOT NULL
+}
+
+entity "profile" as profile {
+  + profile_id : UUIDv4 <<generated>>
+  --
+  name : string NOT NULL (Default: username)
+  image : string
+  bio : string
+}
+
+entity "order" as order {
+  + order_id : UUIDv4 <<generated>>
+  --
+  - user_id : string NOT NULL
+  - product_id : string NOT NULL
+  - address_id : string NOT NULL
+  status : string NOT NULL
+}
+
+entity "product" as product {
+  + product_id : UUIDv4 <<generated>>
+  --
+  number: int NOT NULL
+  name: string NOT NULL
+  type: string NOT NULL
+  height: string NOT NULL
+  weight: string NOT NULL
+  image: string NOT NULL
+  price: double NOT NULL
+}
+
+entity "address" as address {
+  + address_id : UUIDv4 <<generated>>
+  --
+  receiver: string NOT NULL
+  building_number: string NOT NULL
+  street: string NOT NULL
+  subdistrict: string NOT NULL
+  district: string NOT NULL
+  province: string NOT NULL
+  postal_code: string NOT NULL
+}
+
+entity "user_has_address" as user_has_address {
+  + user_has_address_id : UUIDv4 <<generated>>
+  --
+  - user_id : string NOT NULL
+  - address_id : string NOT NULL
+}
+
+user ||--|{ token
+profile ||--|| user
+
+user_has_address ||--|{ user
+user_has_address ||--|{ address
+
+order ||-up-|{ user
+order ||--|{ product
+order ||--|{ address
+
+@enduml
